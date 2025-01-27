@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "stdbool.h": "c",
+    "sdl_vulkan.h": "c",
+    "format": "c"
+  }
+}
