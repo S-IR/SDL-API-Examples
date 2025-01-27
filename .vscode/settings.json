@@ -2,6 +2,8 @@
   "files.associations": {
     "stdbool.h": "c",
     "sdl_vulkan.h": "c",
-    "format": "c"
+    "format": "c",
+    "system_error": "c",
+    "sdl.h": "c"
   }
 }

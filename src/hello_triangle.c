@@ -4,7 +4,9 @@ typedef struct Context
 {
   SDL_GPUDevice *Device;
   SDL_Window *Window;
+  SDL_GPUGraphicsPipeline *Pipeline;
 } Context;
+Context context = {0};
 
 // Simple vertex shader that creates a triangle
 const char *vertexShaderCode =
@@ -34,16 +36,21 @@ const char *fragmentShaderCode =
     "    o_color = v_color;\n"
     "}\n";
 
-void CommonQuit(Context *context)
+void Cleanup()
 {
-  SDL_ReleaseWindowFromGPUDevice(context->Device, context->Window);
-  SDL_DestroyWindow(context->Window);
-  SDL_DestroyGPUDevice(context->Device);
+  if (context.Device != NULL && context.Pipeline != NULL)
+  {
+    SDL_ReleaseGPUGraphicsPipeline(context.Device, context.Pipeline);
+  }
+  if (context.Device != NULL)
+  {
+    SDL_DestroyWindow(context.Window);
+    SDL_DestroyGPUDevice(context.Device);
+  }
 }
-
 static SDL_GPUGraphicsPipeline *Pipeline;
 
-static SDL_GPUShader *LoadShader(SDL_GPUDevice *device, SDL_GPUShaderStage stage, const char *code, size_t codeSize)
+static SDL_GPUShader *SimpleLoadShader(SDL_GPUDevice *device, SDL_GPUShaderStage stage, const char *code, size_t codeSize)
 {
   SDL_GPUShaderCreateInfo shaderInfo = {
       .code = code,
@@ -56,15 +63,12 @@ static SDL_GPUShader *LoadShader(SDL_GPUDevice *device, SDL_GPUShaderStage stage
 
 int main(int argc, char **argv)
 {
-  SDL_Log("hello workd");
-
-  if (SDL_Init(SDL_INIT_VIDEO) < 0)
+  if (SDL_Init(SDL_INIT_VIDEO) == false)
   {
     SDL_Log("Failed to initialize SDL: %s", SDL_GetError());
     return 1;
   }
 
-  Context context = {0};
   context.Device = SDL_CreateGPUDevice(
       SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_MSL,
       false,
@@ -89,10 +93,10 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  SDL_GPUShader *vertexShader = LoadShader(context.Device, SDL_GPU_SHADERSTAGE_VERTEX,
-                                           vertexShaderCode, SDL_strlen(vertexShaderCode));
-  SDL_GPUShader *fragmentShader = LoadShader(context.Device, SDL_GPU_SHADERSTAGE_FRAGMENT,
-                                             fragmentShaderCode, SDL_strlen(fragmentShaderCode));
+  SDL_GPUShader *vertexShader = SimpleLoadShader(context.Device, SDL_GPU_SHADERSTAGE_VERTEX,
+                                                 vertexShaderCode, SDL_strlen(vertexShaderCode));
+  SDL_GPUShader *fragmentShader = SimpleLoadShader(context.Device, SDL_GPU_SHADERSTAGE_FRAGMENT,
+                                                   fragmentShaderCode, SDL_strlen(fragmentShaderCode));
 
   if (!vertexShader || !fragmentShader)
   {
@@ -158,7 +162,7 @@ int main(int argc, char **argv)
 
   // Cleanup
   SDL_ReleaseGPUGraphicsPipeline(context.Device, Pipeline);
-  CommonQuit(&context);
+  Cleanup();
   SDL_Quit();
 
   return 0;
