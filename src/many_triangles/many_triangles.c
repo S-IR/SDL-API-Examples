@@ -242,8 +242,10 @@ int main()
       return -1;
     }
     if (swapchainTexture == NULL)
+    {
+      SDL_SubmitGPUCommandBuffer(cmdbuf);
       continue;
-
+    }
     SDL_GPUColorTargetInfo colorTargetInfo = {0};
     colorTargetInfo.texture = swapchainTexture;
     colorTargetInfo.clear_color = (SDL_FColor){0.0f, 0.0f, 0.0f, 1.0f};

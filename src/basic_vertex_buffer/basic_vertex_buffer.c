@@ -222,7 +222,11 @@ int main()
       return -1;
     }
 
-    SDL_assert(swapchainTexture != NULL);
+    if (swapchainTexture == NULL)
+    {
+      SDL_SubmitGPUCommandBuffer(cmdbuf);
+      continue;
+    }
 
     SDL_GPUColorTargetInfo colorTargetInfo = {
         .texture = swapchainTexture,
