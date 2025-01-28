@@ -47,7 +47,7 @@ int main(int argc, char const *argv[])
   }
 
   context.Device = SDL_CreateGPUDevice(
-      SDL_GPU_SHADERFORMAT_DXIL,
+      SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL,
       false,
       NULL);
 
@@ -210,7 +210,7 @@ SDL_GPUShader *LoadShader(
 
   if (backendFormats & SDL_GPU_SHADERFORMAT_SPIRV)
   {
-    SDL_snprintf(fullPath, sizeof(fullPath), "%s/spir-v/%s.spv", ShaderBinaryBasePath, shaderFilename);
+    SDL_snprintf(fullPath, sizeof(fullPath), "%s/spv/%s.spv", ShaderBinaryBasePath, shaderFilename);
     format = SDL_GPU_SHADERFORMAT_SPIRV;
     entrypoint = "main";
   }

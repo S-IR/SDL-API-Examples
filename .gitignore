@@ -1,1 +1,3 @@
 build/*
+SDL_gpu_examples/
+SDL/

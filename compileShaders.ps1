@@ -1,2 +1,0 @@
-& dxc -T ps_6_0 -E main -Fo  .\shader-binaries\dxil\SolidColor.frag.dxil .\src\resize\SolidColor.frag.hlsl
-& dxc -T vs_6_0 -E main -Fo  .\shader-binaries\dxil\RawTriangle.vert.dxil .\src\resize\RawTriangle.vert.hlsl

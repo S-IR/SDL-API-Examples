@@ -2,6 +2,11 @@
 $CC = "gcc"
 $CFLAGS = @("-Wall", "-O2", "-I'D:/utils/msys64/mingw64/include'", "-L'C:/Libraries/lib'", "-lSDL3")
 $BUILD_DIR = "build"
+$COMPILE_DXIL = $true;
+$COMPILE_SPIRV = $true;
+
+$HLSL_OUTPUT_PATH = ".\shader-binaries\dxil"
+$SPIRV_OUTPUT_PATH = ".\shader-binaries\spv"
 
 # Create build directory if it doesn't exist
 if (-not (Test-Path $BUILD_DIR)) {
@@ -16,9 +21,16 @@ Write-Host "Compiling triangle..."
 
 # # Compile resize program
 Write-Host "Compiling resize..."
-& dxc -T ps_6_0 -E main -Fo  .\shader-binaries\dxil\SolidColor.frag.dxil .\src\resize\SolidColor.frag.hlsl
-& dxc -T vs_6_0 -E main -Fo  .\shader-binaries\dxil\RawTriangle.vert.dxil .\src\resize\RawTriangle.vert.hlsl
+$RESIZE_PATH = ".\src\resize"
+if ($COMPILE_DXIL) {
+    & dxc -T ps_6_0 -E main -Fo  $HLSL_OUTPUT_PATH\SolidColor.frag.dxil $RESIZE_PATH\hlsl\SolidColor.frag.hlsl
+    & dxc -T vs_6_0 -E main -Fo  $HLSL_OUTPUT_PATH\RawTriangle.vert.dxil $RESIZE_PATH\hlsl\RawTriangle.vert.hlsl
+}
 
-& $CC $LDFLAGS $CFLAGS "src/resize/resize.c" -o "$BUILD_DIR/resize.exe" 
+if ($COMPILE_SPIRV) {
+    glslangValidator -e main -V $RESIZE_PATH\hlsl\RawTriangle.vert.hlsl -o $SPIRV_OUTPUT_PATH\RawTriangle.vert.spv
+    glslangValidator -e main -V $RESIZE_PATH\hlsl\SolidColor.frag.hlsl -o $SPIRV_OUTPUT_PATH\SolidColor.frag.spv
+}
+& $CC $LDFLAGS $CFLAGS "$RESIZE_PATH\resize.c" -o "$BUILD_DIR\resize.exe" 
 
 Write-Host "Build completed successfully!"
