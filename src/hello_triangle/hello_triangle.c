@@ -35,27 +35,19 @@ SDL_GPUShader *LoadShader(
     return NULL;
   }
 
-  char fullPath[1024];
-  SDL_GPUShaderFormat backendFormats = SDL_GetGPUShaderFormats(device);
-  SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_INVALID;
+  SDL_GPUShaderFormat format = SDL_GetGPUShaderFormats(device);
   const char *entrypoint;
 
-  if (backendFormats & SDL_GPU_SHADERFORMAT_SPIRV)
+  if (format & SDL_GPU_SHADERFORMAT_SPIRV)
   {
-    SDL_snprintf(fullPath, sizeof(fullPath), shaderPath);
-    format = SDL_GPU_SHADERFORMAT_SPIRV;
     entrypoint = "main";
   }
-  else if (backendFormats & SDL_GPU_SHADERFORMAT_MSL)
+  else if (format & SDL_GPU_SHADERFORMAT_MSL)
   {
-    SDL_snprintf(fullPath, sizeof(fullPath), shaderPath);
-    format = SDL_GPU_SHADERFORMAT_MSL;
     entrypoint = "main0";
   }
-  else if (backendFormats & SDL_GPU_SHADERFORMAT_DXIL)
+  else if (format & SDL_GPU_SHADERFORMAT_DXIL)
   {
-    SDL_snprintf(fullPath, sizeof(fullPath), shaderPath);
-    format = SDL_GPU_SHADERFORMAT_DXIL;
     entrypoint = "main";
   }
   else
@@ -65,10 +57,10 @@ SDL_GPUShader *LoadShader(
   }
 
   size_t codeSize;
-  void *code = SDL_LoadFile(fullPath, &codeSize);
+  void *code = SDL_LoadFile(shaderPath, &codeSize);
   if (code == NULL)
   {
-    SDL_Log("Failed to load shader from disk! %s", fullPath);
+    SDL_Log("Failed to load shader from disk! %s", shaderPath);
     return NULL;
   }
 
