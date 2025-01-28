@@ -65,7 +65,7 @@ if $use_hlsl; then
 fi
 
 if $use_glsl; then
- glslangValidator -S vert -DVERTEX -V -o $TEXTURE_QUAD_PATH/TexturedQuad.vert.spv $TEXTURE_QUAD_PATH/TexturedQuad.glsl
-  glslangValidator -S frag -DFRAGMENT -V -o $TEXTURE_QUAD_PATH/TexturedQuad.frag.spv $TEXTURE_QUAD_PATH/TexturedQuad.glsl
+ glslangValidator -S vert -DVERTEX -V -o $SPV_BUILD_PATH/TexturedQuad.vert.spv $TEXTURE_QUAD_PATH/TexturedQuad.glsl
+  glslangValidator -S frag -DFRAGMENT -V -o $SPV_BUILD_PATH/TexturedQuad.frag.spv $TEXTURE_QUAD_PATH/TexturedQuad.glsl
 fi
 $CC  $TEXTURE_QUAD_PATH/texture_quad.c $TEXTURE_QUAD_PATH/load.c -o ./build/texture_quad $CFLAGS $CLINK
