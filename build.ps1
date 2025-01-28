@@ -1,3 +1,5 @@
+
+
 # Set variables
 $CC = "gcc"
 $CFLAGS = @("-Wall", "-O2", "-I'D:/utils/msys64/mingw64/include'", "-L'C:/Libraries/lib'", "-lSDL3")

@@ -203,7 +203,7 @@ SDL_GPUShader *LoadShader(
     return NULL;
   }
 
-  char fullPath[256];
+  char fullPath[1024];
   SDL_GPUShaderFormat backendFormats = SDL_GetGPUShaderFormats(device);
   SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_INVALID;
   const char *entrypoint;
