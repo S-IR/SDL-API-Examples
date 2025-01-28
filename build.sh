@@ -26,3 +26,17 @@ glslangValidator -e main -V $RESIZE_PATH/hlsl/RawTriangle.vert.hlsl -o $SPV_BUIL
 glslangValidator -e main -V $RESIZE_PATH/hlsl/SolidColor.frag.hlsl -o $SPV_BUILD_PATH/SolidColor.frag.spv
 $CC  $RESIZE_PATH/resize.c -o ./build/resize $CFLAGS $CLINK
 # echo "$CC $CFLAGS $CLINK $RESIZE_PATH/resize.c -o ./build/resize"
+
+BASIC_VERTEX_PATH="src/basic_vertex_buffer"
+echo -e "$GREEN   Building basic vertex buffer $NC"
+glslangValidator -e main -V $BASIC_VERTEX_PATH/hlsl/PositionColor.vert.hlsl -o $SPV_BUILD_PATH/PositionColor.vert.spv
+glslangValidator -e main -V $BASIC_VERTEX_PATH/hlsl/SolidColor.frag.hlsl -o $SPV_BUILD_PATH/SolidColor.frag.spv
+$CC  $BASIC_VERTEX_PATH/basic_vertex_buffer.c -o ./build/basic_vertex_buffer $CFLAGS $CLINK
+
+
+
+MANY_TRIANGLES_PATH="src/many_triangles"
+echo -e "$GREEN  Building many triangles $NC"
+glslangValidator -e main -V $MANY_TRIANGLES_PATH/hlsl/PositionColorInstanced.vert.hlsl -o $SPV_BUILD_PATH/PositionColorInstanced.vert.spv
+glslangValidator -e main -V $MANY_TRIANGLES_PATH/hlsl/SolidColor.frag.hlsl -o $SPV_BUILD_PATH/SolidColor.frag.spv
+$CC  $MANY_TRIANGLES_PATH/many_triangles.c $MANY_TRIANGLES_PATH/load.c -o ./build/many_triangles $CFLAGS $CLINK

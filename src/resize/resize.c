@@ -25,7 +25,7 @@ const Resolution Resolutions[] =
 uint32_t ResolutionCount = SDL_arraysize(Resolutions);
 
 Sint32 ResolutionIndex;
-
+// This load shader is different from hello_triangle shader in that it accepts only the name of the shader binary and it will fill the rest of the path
 SDL_GPUShader *LoadShader(
     SDL_GPUDevice *device,
     const char *shaderFilename,
@@ -178,7 +178,6 @@ int main(int argc, char const *argv[])
   return 0;
 }
 
-const char *ShaderBinaryBasePath = "./shader-binaries";
 SDL_GPUShader *LoadShader(
     SDL_GPUDevice *device,
     const char *shaderFilename,
@@ -187,6 +186,7 @@ SDL_GPUShader *LoadShader(
     Uint32 storageBufferCount,
     Uint32 storageTextureCount)
 {
+  const char *ShaderBinaryBasePath = "./shader-binaries";
   // Auto-detect the shader stage from the file name for convenience
   SDL_GPUShaderStage stage;
   if (SDL_strstr(shaderFilename, ".vert"))
