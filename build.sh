@@ -12,7 +12,7 @@ CLINK="-lSDL3"
 echo "Starting to build"
 SPV_BUILD_PATH="shader-binaries/spv"
 
-use_hlsl=true 
+use_hlsl=false 
 # glsl's are generated last so hlsl generated spirv will be overwritten
 use_glsl=true
 
@@ -47,7 +47,6 @@ fi
 $CC  $BASIC_VERTEX_PATH/basic_vertex_buffer.c -o ./build/basic_vertex_buffer $CFLAGS $CLINK
 
 
-
 MANY_TRIANGLES_PATH="src/many_triangles"
 echo -e "$GREEN  Building many triangles $NC"
 if $use_hlsl; then
@@ -58,7 +57,7 @@ $CC  $MANY_TRIANGLES_PATH/many_triangles.c $MANY_TRIANGLES_PATH/load.c -o ./buil
 
 
 TEXTURE_QUAD_PATH="src/texture_quad"
-echo -e "$GREEN  Building many triangles $NC"
+echo -e "$GREEN  Building texture quad $NC"
 if $use_hlsl; then
   glslangValidator -e main -V $TEXTURE_QUAD_PATH/hlsl/TexturedQuad.vert.hlsl -o $SPV_BUILD_PATH/TexturedQuad.vert.spv
   glslangValidator -e main -V $TEXTURE_QUAD_PATH/hlsl/TexturedQuad.frag.hlsl -o $SPV_BUILD_PATH/TexturedQuad.frag.spv
@@ -69,3 +68,19 @@ if $use_glsl; then
   glslangValidator -S frag -DFRAGMENT -V -o $SPV_BUILD_PATH/TexturedQuad.frag.spv $TEXTURE_QUAD_PATH/TexturedQuad.glsl
 fi
 $CC  $TEXTURE_QUAD_PATH/texture_quad.c $TEXTURE_QUAD_PATH/load.c -o ./build/texture_quad $CFLAGS $CLINK
+
+
+
+
+TEXTURE_ANIMATED_QUAD="src/texture_animated_quad"
+echo -e "$GREEN  Building texture animated quad $NC"
+if $use_hlsl; then
+  glslangValidator -e main -V $TEXTURE_ANIMATED_QUAD/hlsl/TexturedQuadWithMatrix.vert.hlsl -o $SPV_BUILD_PATH/TexturedQuadWithMatrix.vert.spv
+  glslangValidator -e main -V $TEXTURE_ANIMATED_QUAD/hlsl/TexturedQuadWithMultiplyColor.frag.hlsl -o $SPV_BUILD_PATH/TexturedQuadWithMultiplyColor.frag.spv
+fi
+
+if $use_glsl; then
+ glslangValidator -S vert -DVERTEX -V -o $SPV_BUILD_PATH/TexturedQuadWithMatrix.vert.spv $TEXTURE_ANIMATED_QUAD/TextureAnimatedQuad.glsl
+  glslangValidator -S frag -DFRAGMENT -V -o $SPV_BUILD_PATH/TexturedQuadWithMultiplyColor.frag.spv $TEXTURE_ANIMATED_QUAD/TextureAnimatedQuad.glsl
+fi
+$CC  $TEXTURE_ANIMATED_QUAD/texture_animated_quad.c $TEXTURE_ANIMATED_QUAD/load.c $TEXTURE_ANIMATED_QUAD/linear_algebra.c -o ./build/texture_animated_quad $CFLAGS $CLINK

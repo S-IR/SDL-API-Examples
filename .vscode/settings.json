@@ -4,6 +4,7 @@
     "sdl_vulkan.h": "c",
     "format": "c",
     "system_error": "c",
-    "sdl.h": "c"
+    "sdl.h": "c",
+    "linear_algebra.h": "c"
   }
 }
