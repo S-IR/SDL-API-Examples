@@ -11,10 +11,10 @@ static SDL_GPUBuffer *SceneIndexBuffer;
 static SDL_GPUTexture *SceneColorTexture;
 static SDL_GPUTexture *SceneDepthTexture;
 
-static SDL_GPUGraphicsPipeline *EffectPipeline;
-static SDL_GPUBuffer *EffectVertexBuffer;
-static SDL_GPUBuffer *EffectIndexBuffer;
-static SDL_GPUSampler *EffectSampler;
+// static SDL_GPUGraphicsPipeline *EffectPipeline;
+// static SDL_GPUBuffer *EffectVertexBuffer;
+// static SDL_GPUBuffer *EffectIndexBuffer;
+// static SDL_GPUSampler *EffectSampler;
 
 typedef struct FragMultiplyUniform
 {
@@ -105,19 +105,19 @@ int main()
       return -1;
     }
 
-    SDL_GPUShader *effectVertexShader = LoadShader(context.Device, "TexturedQuad.vert", 0, 0, 0, 0);
-    if (effectVertexShader == NULL)
-    {
-      SDL_Log("Failed to create 'TexturedQuad' vertex shader!");
-      return -1;
-    }
+    // SDL_GPUShader *effectVertexShader = LoadShader(context.Device, "TexturedQuad.vert", 0, 0, 0, 0);
+    // if (effectVertexShader == NULL)
+    // {
+    //   SDL_Log("Failed to create 'TexturedQuad' vertex shader!");
+    //   return -1;
+    // }
 
-    SDL_GPUShader *effectFragmentShader = LoadShader(context.Device, "DepthOutline.frag", 2, 1, 0, 0);
-    if (effectFragmentShader == NULL)
-    {
-      SDL_Log("Failed to create 'DepthOutline' fragment shader!");
-      return -1;
-    }
+    // SDL_GPUShader *effectFragmentShader = LoadShader(context.Device, "DepthOutline.frag", 2, 1, 0, 0);
+    // if (effectFragmentShader == NULL)
+    // {
+    //   SDL_Log("Failed to create 'DepthOutline' fragment shader!");
+    //   return -1;
+    // }
 
     SDL_GPUGraphicsPipelineCreateInfo pipelineCreateInfo = {
         .target_info = {
@@ -193,80 +193,80 @@ int main()
       return -1;
     }
 
-    pipelineCreateInfo = (SDL_GPUGraphicsPipelineCreateInfo){
-        .target_info = {
-            .num_color_targets = 1,
-            .color_target_descriptions = (SDL_GPUColorTargetDescription[]){
+    // pipelineCreateInfo = (SDL_GPUGraphicsPipelineCreateInfo){
+    //     .target_info = {
+    //         .num_color_targets = 1,
+    //         .color_target_descriptions = (SDL_GPUColorTargetDescription[]){
 
-                {
+    //             {
 
-                    .format = SDL_GetGPUSwapchainTextureFormat(context.Device, context.Window),
-                    .blend_state = (SDL_GPUColorTargetBlendState){
-                        .enable_blend = true,
-                        .src_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
-                        .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
-                        .color_blend_op = SDL_GPU_BLENDOP_ADD,
-                        .src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
-                        .dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
-                        .alpha_blend_op = SDL_GPU_BLENDOP_ADD,
-                    }}
+    //                 .format = SDL_GetGPUSwapchainTextureFormat(context.Device, context.Window),
+    //                 .blend_state = (SDL_GPUColorTargetBlendState){
+    //                     .enable_blend = true,
+    //                     .src_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
+    //                     .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+    //                     .color_blend_op = SDL_GPU_BLENDOP_ADD,
+    //                     .src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE,
+    //                     .dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+    //                     .alpha_blend_op = SDL_GPU_BLENDOP_ADD,
+    //                 }}
 
-            },
-        },
-        .vertex_input_state = (SDL_GPUVertexInputState){
+    //         },
+    //     },
+    //     .vertex_input_state = (SDL_GPUVertexInputState){
 
-            .num_vertex_buffers = 1,
+    //         .num_vertex_buffers = 1,
 
-            .vertex_buffer_descriptions = (SDL_GPUVertexBufferDescription[]){
+    //         .vertex_buffer_descriptions = (SDL_GPUVertexBufferDescription[]){
 
-                {
+    //             {
 
-                    .slot = 0,
+    //                 .slot = 0,
 
-                    .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
+    //                 .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
 
-                    .instance_step_rate = 0,
+    //                 .instance_step_rate = 0,
 
-                    .pitch = sizeof(PositionTextureVertex)}
+    //                 .pitch = sizeof(PositionTextureVertex)}
 
-            },
-            .num_vertex_attributes = 2,
-            .vertex_attributes = (SDL_GPUVertexAttribute[]){
+    //         },
+    //         .num_vertex_attributes = 2,
+    //         .vertex_attributes = (SDL_GPUVertexAttribute[]){
 
-                {
+    //             {
 
-                    .buffer_slot = 0,
+    //                 .buffer_slot = 0,
 
-                    .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+    //                 .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
 
-                    .location = 0,
+    //                 .location = 0,
 
-                    .offset = 0},
+    //                 .offset = 0},
 
-                {
+    //             {
 
-                    .buffer_slot = 0,
+    //                 .buffer_slot = 0,
 
-                    .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+    //                 .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
 
-                    .location = 1,
+    //                 .location = 1,
 
-                    .offset = sizeof(float) * 3}
+    //                 .offset = sizeof(float) * 3}
 
-            }},
-        .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
-        .vertex_shader = effectVertexShader,
-        .fragment_shader = effectFragmentShader};
+    //         }},
+    //     .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
+    //     .vertex_shader = effectVertexShader,
+    //     .fragment_shader = effectFragmentShader};
 
-    EffectPipeline = SDL_CreateGPUGraphicsPipeline(context.Device, &pipelineCreateInfo);
-    if (EffectPipeline == NULL)
-    {
-      SDL_Log("Failed to create Outline Effect pipeline!");
-      return -1;
-    }
+    // EffectPipeline = SDL_CreateGPUGraphicsPipeline(context.Device, &pipelineCreateInfo);
+    // if (EffectPipeline == NULL)
+    // {
+    //   SDL_Log("Failed to create Outline Effect pipeline!");
+    //   return -1;
+    // }
 
-    SDL_ReleaseGPUShader(context.Device, effectVertexShader);
-    SDL_ReleaseGPUShader(context.Device, effectFragmentShader);
+    // SDL_ReleaseGPUShader(context.Device, effectVertexShader);
+    // SDL_ReleaseGPUShader(context.Device, effectFragmentShader);
 
     SDL_ReleaseGPUShader(context.Device, sceneVertexShader);
     SDL_ReleaseGPUShader(context.Device, sceneFragmentShader);
@@ -305,14 +305,14 @@ int main()
   }
 
   // Create Outline Effect Sampler
-  EffectSampler = SDL_CreateGPUSampler(context.Device, &(SDL_GPUSamplerCreateInfo){
-                                                           .min_filter = SDL_GPU_FILTER_NEAREST,
-                                                           .mag_filter = SDL_GPU_FILTER_NEAREST,
-                                                           .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
-                                                           .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-                                                           .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-                                                           .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-                                                       });
+  // EffectSampler = SDL_CreateGPUSampler(context.Device, &(SDL_GPUSamplerCreateInfo){
+  //                                                          .min_filter = SDL_GPU_FILTER_NEAREST,
+  //                                                          .mag_filter = SDL_GPU_FILTER_NEAREST,
+  //                                                          .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+  //                                                          .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+  //                                                          .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+  //                                                          .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+  //                                                      });
 
   // Create & Upload Scene Index and Vertex Buffers
   {
@@ -413,74 +413,74 @@ int main()
   }
 
   // Create & Upload Outline Effect Vertex and Index buffers
-  {
-    EffectVertexBuffer = SDL_CreateGPUBuffer(
-        context.Device,
-        &(SDL_GPUBufferCreateInfo){
-            .usage = SDL_GPU_BUFFERUSAGE_VERTEX,
-            .size = sizeof(PositionTextureVertex) * 4});
+  // {
+  //   EffectVertexBuffer = SDL_CreateGPUBuffer(
+  //       context.Device,
+  //       &(SDL_GPUBufferCreateInfo){
+  //           .usage = SDL_GPU_BUFFERUSAGE_VERTEX,
+  //           .size = sizeof(PositionTextureVertex) * 4});
 
-    EffectIndexBuffer = SDL_CreateGPUBuffer(
-        context.Device,
-        &(SDL_GPUBufferCreateInfo){
-            .usage = SDL_GPU_BUFFERUSAGE_INDEX,
-            .size = sizeof(Uint16) * 6});
+  //   EffectIndexBuffer = SDL_CreateGPUBuffer(
+  //       context.Device,
+  //       &(SDL_GPUBufferCreateInfo){
+  //           .usage = SDL_GPU_BUFFERUSAGE_INDEX,
+  //           .size = sizeof(Uint16) * 6});
 
-    SDL_GPUTransferBuffer *bufferTransferBuffer = SDL_CreateGPUTransferBuffer(
-        context.Device,
-        &(SDL_GPUTransferBufferCreateInfo){
-            .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-            .size = (sizeof(PositionTextureVertex) * 4) + (sizeof(Uint16) * 6)});
+  //   SDL_GPUTransferBuffer *bufferTransferBuffer = SDL_CreateGPUTransferBuffer(
+  //       context.Device,
+  //       &(SDL_GPUTransferBufferCreateInfo){
+  //           .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+  //           .size = (sizeof(PositionTextureVertex) * 4) + (sizeof(Uint16) * 6)});
 
-    PositionTextureVertex *transferData = SDL_MapGPUTransferBuffer(
-        context.Device,
-        bufferTransferBuffer,
-        false);
+  //   PositionTextureVertex *transferData = SDL_MapGPUTransferBuffer(
+  //       context.Device,
+  //       bufferTransferBuffer,
+  //       false);
 
-    transferData[0] = (PositionTextureVertex){-1, 1, 0, 0, 0};
-    transferData[1] = (PositionTextureVertex){1, 1, 0, 1, 0};
-    transferData[2] = (PositionTextureVertex){1, -1, 0, 1, 1};
-    transferData[3] = (PositionTextureVertex){-1, -1, 0, 0, 1};
+  //   transferData[0] = (PositionTextureVertex){-1, 1, 0, 0, 0};
+  //   transferData[1] = (PositionTextureVertex){1, 1, 0, 1, 0};
+  //   transferData[2] = (PositionTextureVertex){1, -1, 0, 1, 1};
+  //   transferData[3] = (PositionTextureVertex){-1, -1, 0, 0, 1};
 
-    Uint16 *indexData = (Uint16 *)&transferData[4];
-    indexData[0] = 0;
-    indexData[1] = 1;
-    indexData[2] = 2;
-    indexData[3] = 0;
-    indexData[4] = 2;
-    indexData[5] = 3;
+  //   Uint16 *indexData = (Uint16 *)&transferData[4];
+  //   indexData[0] = 0;
+  //   indexData[1] = 1;
+  //   indexData[2] = 2;
+  //   indexData[3] = 0;
+  //   indexData[4] = 2;
+  //   indexData[5] = 3;
 
-    SDL_UnmapGPUTransferBuffer(context.Device, bufferTransferBuffer);
+  //   SDL_UnmapGPUTransferBuffer(context.Device, bufferTransferBuffer);
 
-    SDL_GPUCommandBuffer *uploadCmdBuf = SDL_AcquireGPUCommandBuffer(context.Device);
-    SDL_GPUCopyPass *copyPass = SDL_BeginGPUCopyPass(uploadCmdBuf);
+  //   SDL_GPUCommandBuffer *uploadCmdBuf = SDL_AcquireGPUCommandBuffer(context.Device);
+  //   SDL_GPUCopyPass *copyPass = SDL_BeginGPUCopyPass(uploadCmdBuf);
 
-    SDL_UploadToGPUBuffer(
-        copyPass,
-        &(SDL_GPUTransferBufferLocation){
-            .transfer_buffer = bufferTransferBuffer,
-            .offset = 0},
-        &(SDL_GPUBufferRegion){
-            .buffer = EffectVertexBuffer,
-            .offset = 0,
-            .size = sizeof(PositionTextureVertex) * 4},
-        false);
+  //   SDL_UploadToGPUBuffer(
+  //       copyPass,
+  //       &(SDL_GPUTransferBufferLocation){
+  //           .transfer_buffer = bufferTransferBuffer,
+  //           .offset = 0},
+  //       &(SDL_GPUBufferRegion){
+  //           .buffer = EffectVertexBuffer,
+  //           .offset = 0,
+  //           .size = sizeof(PositionTextureVertex) * 4},
+  //       false);
 
-    SDL_UploadToGPUBuffer(
-        copyPass,
-        &(SDL_GPUTransferBufferLocation){
-            .transfer_buffer = bufferTransferBuffer,
-            .offset = sizeof(PositionTextureVertex) * 4},
-        &(SDL_GPUBufferRegion){
-            .buffer = EffectIndexBuffer,
-            .offset = 0,
-            .size = sizeof(Uint16) * 6},
-        false);
+  //   SDL_UploadToGPUBuffer(
+  //       copyPass,
+  //       &(SDL_GPUTransferBufferLocation){
+  //           .transfer_buffer = bufferTransferBuffer,
+  //           .offset = sizeof(PositionTextureVertex) * 4},
+  //       &(SDL_GPUBufferRegion){
+  //           .buffer = EffectIndexBuffer,
+  //           .offset = 0,
+  //           .size = sizeof(Uint16) * 6},
+  //       false);
 
-    SDL_EndGPUCopyPass(copyPass);
-    SDL_SubmitGPUCommandBuffer(uploadCmdBuf);
-    SDL_ReleaseGPUTransferBuffer(context.Device, bufferTransferBuffer);
-  }
+  //   SDL_EndGPUCopyPass(copyPass);
+  //   SDL_SubmitGPUCommandBuffer(uploadCmdBuf);
+  //   SDL_ReleaseGPUTransferBuffer(context.Device, bufferTransferBuffer);
+  // }
 
   SDL_Event event;
   int quit = 0;
@@ -553,7 +553,7 @@ int main()
       colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
       SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo = {0};
-      depthStencilTargetInfo.texture = SceneDepthTexture;
+      depthStencilTargetInfo.texture = swapchainTexture;
       depthStencilTargetInfo.cycle = true;
       depthStencilTargetInfo.clear_depth = 1;
       depthStencilTargetInfo.clear_stencil = 0;
@@ -572,20 +572,20 @@ int main()
       SDL_DrawGPUIndexedPrimitives(renderPass, 36, 1, 0, 0, 0);
       SDL_EndGPURenderPass(renderPass);
 
-      // Render the Outline Effect that samples from the Color/Depth textures
-      SDL_GPUColorTargetInfo swapchainTargetInfo = {0};
-      swapchainTargetInfo.texture = swapchainTexture;
-      swapchainTargetInfo.clear_color = (SDL_FColor){0.2f, 0.5f, 0.4f, 1.0f};
-      swapchainTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-      swapchainTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+      // // Render the Outline Effect that samples from the Color/Depth textures
+      // SDL_GPUColorTargetInfo swapchainTargetInfo = {0};
+      // swapchainTargetInfo.texture = swapchainTexture;
+      // swapchainTargetInfo.clear_color = (SDL_FColor){0.2f, 0.5f, 0.4f, 1.0f};
+      // swapchainTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+      // swapchainTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
 
-      renderPass = SDL_BeginGPURenderPass(cmdbuf, &swapchainTargetInfo, 1, NULL);
-      SDL_BindGPUGraphicsPipeline(renderPass, EffectPipeline);
-      SDL_BindGPUVertexBuffers(renderPass, 0, &(SDL_GPUBufferBinding){.buffer = EffectVertexBuffer, .offset = 0}, 1);
-      SDL_BindGPUIndexBuffer(renderPass, &(SDL_GPUBufferBinding){.buffer = EffectIndexBuffer, .offset = 0}, SDL_GPU_INDEXELEMENTSIZE_16BIT);
-      SDL_BindGPUFragmentSamplers(renderPass, 0, (SDL_GPUTextureSamplerBinding[]){{.texture = SceneColorTexture, .sampler = EffectSampler}, {.texture = SceneDepthTexture, .sampler = EffectSampler}}, 2);
-      SDL_DrawGPUIndexedPrimitives(renderPass, 6, 1, 0, 0, 0);
-      SDL_EndGPURenderPass(renderPass);
+      // renderPass = SDL_BeginGPURenderPass(cmdbuf, &swapchainTargetInfo, 1, NULL);
+      // SDL_BindGPUGraphicsPipeline(renderPass, EffectPipeline);
+      // SDL_BindGPUVertexBuffers(renderPass, 0, &(SDL_GPUBufferBinding){.buffer = EffectVertexBuffer, .offset = 0}, 1);
+      // SDL_BindGPUIndexBuffer(renderPass, &(SDL_GPUBufferBinding){.buffer = EffectIndexBuffer, .offset = 0}, SDL_GPU_INDEXELEMENTSIZE_16BIT);
+      // SDL_BindGPUFragmentSamplers(renderPass, 0, (SDL_GPUTextureSamplerBinding[]){{.texture = SceneColorTexture, .sampler = EffectSampler}, {.texture = SceneDepthTexture, .sampler = EffectSampler}}, 2);
+      // SDL_DrawGPUIndexedPrimitives(renderPass, 6, 1, 0, 0, 0);
+      // SDL_EndGPURenderPass(renderPass);
     }
     SDL_SubmitGPUCommandBuffer(cmdbuf);
   }
@@ -598,8 +598,8 @@ int main()
   SDL_ReleaseGPUBuffer(context.Device, SceneVertexBuffer);
   SDL_ReleaseGPUBuffer(context.Device, SceneIndexBuffer);
 
-  SDL_ReleaseGPUGraphicsPipeline(context.Device, EffectPipeline);
-  SDL_ReleaseGPUBuffer(context.Device, EffectVertexBuffer);
-  SDL_ReleaseGPUBuffer(context.Device, EffectIndexBuffer);
-  SDL_ReleaseGPUSampler(context.Device, EffectSampler);
+  // SDL_ReleaseGPUGraphicsPipeline(context.Device, EffectPipeline);
+  // SDL_ReleaseGPUBuffer(context.Device, EffectVertexBuffer);
+  // SDL_ReleaseGPUBuffer(context.Device, EffectIndexBuffer);
+  // SDL_ReleaseGPUSampler(context.Device, EffectSampler);
 }

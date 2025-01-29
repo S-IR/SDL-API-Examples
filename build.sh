@@ -12,9 +12,9 @@ CLINK="-lSDL3"
 echo "Starting to build"
 SPV_BUILD_PATH="shader-binaries/spv"
 
-use_hlsl=true 
+use_hlsl=false 
 # glsl's are generated last so hlsl generated spirv will be overwritten
-use_glsl=false
+use_glsl=true
 
 
 mkdir build/
@@ -98,7 +98,7 @@ if $use_hlsl; then
 fi
 
 if $use_glsl; then
- glslangValidator -S vert -DVERTEX -V -o $SPV_BUILD_PATH/TexturedQuadWithMatrix.vert.spv $CUBE_PATH/TextureAnimatedQuad.glsl
-  glslangValidator -S frag -DFRAGMENT -V -o $SPV_BUILD_PATH/TexturedQuadWithMultiplyColor.frag.spv $CUBE_PATH/TextureAnimatedQuad.glsl
+ glslangValidator -S vert -DVERTEX -V -o $SPV_BUILD_PATH/PositionColorTransform.vert.spv $CUBE_PATH/cubeScene.glsl
+  glslangValidator -S frag -DFRAGMENT -V -o $SPV_BUILD_PATH/SolidColorDepth.frag.spv $CUBE_PATH/cubeScene.glsl
 fi
 $CC  $CUBE_PATH/cube.c $CUBE_PATH/load.c $CUBE_PATH/linear_algebra.c -o ./build/cube $CFLAGS $CLINK
