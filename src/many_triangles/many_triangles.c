@@ -41,7 +41,7 @@ int main()
     return -1;
   }
 
-  context.Window = SDL_CreateWindow("Basic Triangle", 640, 480, 0);
+  context.Window = SDL_CreateWindow("Many Triangles", 640, 480, 0);
   if (context.Window == NULL)
   {
     SDL_Log("CreateWindow failed: %s", SDL_GetError());
@@ -216,8 +216,6 @@ int main()
 
   while (!quit)
   {
-    bool changeResolution = false;
-
     while (SDL_PollEvent(&event))
     {
       switch (event.type)

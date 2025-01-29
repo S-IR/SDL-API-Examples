@@ -12,9 +12,9 @@ CLINK="-lSDL3"
 echo "Starting to build"
 SPV_BUILD_PATH="shader-binaries/spv"
 
-use_hlsl=false 
+use_hlsl=true 
 # glsl's are generated last so hlsl generated spirv will be overwritten
-use_glsl=true
+use_glsl=false
 
 
 mkdir build/
@@ -72,15 +72,33 @@ $CC  $TEXTURE_QUAD_PATH/texture_quad.c $TEXTURE_QUAD_PATH/load.c -o ./build/text
 
 
 
-TEXTURE_ANIMATED_QUAD="src/texture_animated_quad"
+TEXTURE_ANIMATED_QUAD_PATH="src/texture_animated_quad"
 echo -e "$GREEN  Building texture animated quad $NC"
 if $use_hlsl; then
-  glslangValidator -e main -V $TEXTURE_ANIMATED_QUAD/hlsl/TexturedQuadWithMatrix.vert.hlsl -o $SPV_BUILD_PATH/TexturedQuadWithMatrix.vert.spv
-  glslangValidator -e main -V $TEXTURE_ANIMATED_QUAD/hlsl/TexturedQuadWithMultiplyColor.frag.hlsl -o $SPV_BUILD_PATH/TexturedQuadWithMultiplyColor.frag.spv
+  glslangValidator -e main -V $TEXTURE_ANIMATED_QUAD_PATH/hlsl/TexturedQuadWithMatrix.vert.hlsl -o $SPV_BUILD_PATH/TexturedQuadWithMatrix.vert.spv
+  glslangValidator -e main -V $TEXTURE_ANIMATED_QUAD_PATH/hlsl/TexturedQuadWithMultiplyColor.frag.hlsl -o $SPV_BUILD_PATH/TexturedQuadWithMultiplyColor.frag.spv
 fi
 
 if $use_glsl; then
- glslangValidator -S vert -DVERTEX -V -o $SPV_BUILD_PATH/TexturedQuadWithMatrix.vert.spv $TEXTURE_ANIMATED_QUAD/TextureAnimatedQuad.glsl
-  glslangValidator -S frag -DFRAGMENT -V -o $SPV_BUILD_PATH/TexturedQuadWithMultiplyColor.frag.spv $TEXTURE_ANIMATED_QUAD/TextureAnimatedQuad.glsl
+ glslangValidator -S vert -DVERTEX -V -o $SPV_BUILD_PATH/TexturedQuadWithMatrix.vert.spv $TEXTURE_ANIMATED_QUAD_PATH/TextureAnimatedQuad.glsl
+  glslangValidator -S frag -DFRAGMENT -V -o $SPV_BUILD_PATH/TexturedQuadWithMultiplyColor.frag.spv $TEXTURE_ANIMATED_QUAD_PATH/TextureAnimatedQuad.glsl
 fi
-$CC  $TEXTURE_ANIMATED_QUAD/texture_animated_quad.c $TEXTURE_ANIMATED_QUAD/load.c $TEXTURE_ANIMATED_QUAD/linear_algebra.c -o ./build/texture_animated_quad $CFLAGS $CLINK
+$CC  $TEXTURE_ANIMATED_QUAD_PATH/texture_animated_quad.c $TEXTURE_ANIMATED_QUAD_PATH/load.c $TEXTURE_ANIMATED_QUAD_PATH/linear_algebra.c -o ./build/texture_animated_quad $CFLAGS $CLINK
+
+
+
+CUBE_PATH="src/cube"
+echo -e "$GREEN  Building cube $NC"
+if $use_hlsl; then
+  glslangValidator -e main -V $CUBE_PATH/hlsl/PositionColorTransform.vert.hlsl -o $SPV_BUILD_PATH/PositionColorTransform.vert.spv
+  glslangValidator -e main -V $CUBE_PATH/hlsl/SolidColorDepth.frag.hlsl -o $SPV_BUILD_PATH/SolidColorDepth.frag.spv
+
+  glslangValidator -e main -V $CUBE_PATH/hlsl/TexturedQuad.vert.hlsl -o $SPV_BUILD_PATH/TexturedQuad.vert.spv
+  glslangValidator -e main -V $CUBE_PATH/hlsl/DepthOutline.frag.hlsl -o $SPV_BUILD_PATH/DepthOutline.frag.spv
+fi
+
+if $use_glsl; then
+ glslangValidator -S vert -DVERTEX -V -o $SPV_BUILD_PATH/TexturedQuadWithMatrix.vert.spv $CUBE_PATH/TextureAnimatedQuad.glsl
+  glslangValidator -S frag -DFRAGMENT -V -o $SPV_BUILD_PATH/TexturedQuadWithMultiplyColor.frag.spv $CUBE_PATH/TextureAnimatedQuad.glsl
+fi
+$CC  $CUBE_PATH/cube.c $CUBE_PATH/load.c $CUBE_PATH/linear_algebra.c -o ./build/cube $CFLAGS $CLINK

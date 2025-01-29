@@ -57,7 +57,7 @@ int main(int argc, char const *argv[])
     return -1;
   }
 
-  context.Window = SDL_CreateWindow("Basic Triangle", 640, 480, SDL_WINDOW_RESIZABLE);
+  context.Window = SDL_CreateWindow("Resize", 640, 480, SDL_WINDOW_RESIZABLE);
   if (context.Window == NULL)
   {
     SDL_Log("CreateWindow failed: %s", SDL_GetError());
