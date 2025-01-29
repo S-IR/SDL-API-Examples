@@ -43,6 +43,21 @@ float Time;
 int SceneWidth, SceneHeight;
 
 Context context = {0};
+double getCurrentFPS()
+{
+  static Uint64 previousTicks = 0;
+  static double fps = 0;
+
+  Uint64 currentTicks = SDL_GetTicks();
+
+  if (previousTicks != 0)
+  {
+    fps = 1000.0 / (currentTicks - previousTicks);
+  }
+
+  previousTicks = currentTicks;
+  return fps;
+}
 
 int main()
 {
@@ -397,15 +412,87 @@ int main()
     SDL_ReleaseGPUTransferBuffer(context.Device, bufferTransferBuffer);
   }
 
-  Time = 0;
+  // Create & Upload Outline Effect Vertex and Index buffers
+  {
+    EffectVertexBuffer = SDL_CreateGPUBuffer(
+        context.Device,
+        &(SDL_GPUBufferCreateInfo){
+            .usage = SDL_GPU_BUFFERUSAGE_VERTEX,
+            .size = sizeof(PositionTextureVertex) * 4});
+
+    EffectIndexBuffer = SDL_CreateGPUBuffer(
+        context.Device,
+        &(SDL_GPUBufferCreateInfo){
+            .usage = SDL_GPU_BUFFERUSAGE_INDEX,
+            .size = sizeof(Uint16) * 6});
+
+    SDL_GPUTransferBuffer *bufferTransferBuffer = SDL_CreateGPUTransferBuffer(
+        context.Device,
+        &(SDL_GPUTransferBufferCreateInfo){
+            .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+            .size = (sizeof(PositionTextureVertex) * 4) + (sizeof(Uint16) * 6)});
+
+    PositionTextureVertex *transferData = SDL_MapGPUTransferBuffer(
+        context.Device,
+        bufferTransferBuffer,
+        false);
+
+    transferData[0] = (PositionTextureVertex){-1, 1, 0, 0, 0};
+    transferData[1] = (PositionTextureVertex){1, 1, 0, 1, 0};
+    transferData[2] = (PositionTextureVertex){1, -1, 0, 1, 1};
+    transferData[3] = (PositionTextureVertex){-1, -1, 0, 0, 1};
+
+    Uint16 *indexData = (Uint16 *)&transferData[4];
+    indexData[0] = 0;
+    indexData[1] = 1;
+    indexData[2] = 2;
+    indexData[3] = 0;
+    indexData[4] = 2;
+    indexData[5] = 3;
+
+    SDL_UnmapGPUTransferBuffer(context.Device, bufferTransferBuffer);
+
+    SDL_GPUCommandBuffer *uploadCmdBuf = SDL_AcquireGPUCommandBuffer(context.Device);
+    SDL_GPUCopyPass *copyPass = SDL_BeginGPUCopyPass(uploadCmdBuf);
+
+    SDL_UploadToGPUBuffer(
+        copyPass,
+        &(SDL_GPUTransferBufferLocation){
+            .transfer_buffer = bufferTransferBuffer,
+            .offset = 0},
+        &(SDL_GPUBufferRegion){
+            .buffer = EffectVertexBuffer,
+            .offset = 0,
+            .size = sizeof(PositionTextureVertex) * 4},
+        false);
+
+    SDL_UploadToGPUBuffer(
+        copyPass,
+        &(SDL_GPUTransferBufferLocation){
+            .transfer_buffer = bufferTransferBuffer,
+            .offset = sizeof(PositionTextureVertex) * 4},
+        &(SDL_GPUBufferRegion){
+            .buffer = EffectIndexBuffer,
+            .offset = 0,
+            .size = sizeof(Uint16) * 6},
+        false);
+
+    SDL_EndGPUCopyPass(copyPass);
+    SDL_SubmitGPUCommandBuffer(uploadCmdBuf);
+    SDL_ReleaseGPUTransferBuffer(context.Device, bufferTransferBuffer);
+  }
+
   SDL_Event event;
   int quit = 0;
-  int CurrentSamplerIndex = 0;
+  float fallDownAmount = 1;
+  float rotationSpeed = 1;
+  Uint32 lastTime = SDL_GetTicks(); // Time of the last frame
 
-  float fallDownAmount = 0;
-  float direction = 1.0f;
   while (!quit)
   {
+    Uint32 currentTime = SDL_GetTicks();
+    float deltaTime = (currentTime - lastTime) / 1000.0f; // Convert to seconds
+    lastTime = currentTime;
 
     while (SDL_PollEvent(&event))
     {
@@ -416,6 +503,14 @@ int main()
         break;
       }
     }
+    static float rotationAngle = 0.0f;          // Cumulative rotation angle
+    rotationAngle += rotationSpeed * deltaTime; // Update angle based on delta time
+    float radius = 30.0f;                       // Distance from the origin
+
+    Vector3 cameraPosition = {
+        SDL_cosf(rotationAngle) * radius,
+        30.0f, // Fixed height
+        SDL_sinf(rotationAngle) * radius};
 
     bool changeResolution = false;
     Time = SDL_GetTicks();
@@ -445,7 +540,7 @@ int main()
           nearPlane,
           farPlane);
       Matrix4x4 view = Matrix4x4_CreateLookAt(
-          (Vector3){SDL_cosf(Time) * 30, 30, SDL_sinf(Time) * 30},
+          cameraPosition,
           (Vector3){0, 0, 0},
           (Vector3){0, 1, 0});
 
